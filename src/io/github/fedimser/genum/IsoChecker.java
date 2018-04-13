@@ -15,11 +15,11 @@ public class IsoChecker {
     }
 
     public boolean isIsomorphic(FinGroup group) {
-        if (group.getOrder()!=n) return false;
+        if (group.getOrder() != n) return false;
         g2 = group.getMultTable();
         curPerm = new Permutation(n);
-        curPerm.set(0,0);
-        answer=false;
+        curPerm.set(0, 0);
+        answer = false;
 
         rec();
 
@@ -27,27 +27,27 @@ public class IsoChecker {
     }
 
     private void rec() {
-        if(answer) return;
+        if (answer) return;
 
         // Must be:
         // g2[p(i)][p(j)] == p(g1[i][j])
 
         // Try fill up the permutation, as possible.
-        for(int i=0;i<n;i++) {
+        for (int i = 0; i < n; i++) {
             int i1 = curPerm.get(i);
-            if(i1==-1) continue;
-            for(int j=0;j<n;j++) {
+            if (i1 == -1) continue;
+            for (int j = 0; j < n; j++) {
                 int j1 = curPerm.get(j);
-                if (j1==-1) continue;
+                if (j1 == -1) continue;
                 int e = curPerm.get(g1[i][j]);
                 int toPut = g2[i1][j1];
-                if(e == -1){
-                    if(curPerm.getInverse(toPut)!=-1) {
+                if (e == -1) {
+                    if (curPerm.getInverse(toPut) != -1) {
                         // Isomorphism impossible.
                         return;
                     }
                     curPerm.set(g1[i][j], toPut);
-                } else if (e!=toPut) {
+                } else if (e != toPut) {
                     // Isomorphism impossible.
                     return;
                 }
@@ -58,11 +58,11 @@ public class IsoChecker {
 
         int pos = curPerm.getEmptyPos();
 
-        if(pos==-1) {
+        if (pos == -1) {
             answer = true;
         } else {
             Permutation backupPerm = curPerm.clone();
-            for(int i: backupPerm.getPossible()) {
+            for (int i : backupPerm.getPossible()) {
                 curPerm = backupPerm.clone();
                 curPerm.set(pos, i);
                 rec();
@@ -79,15 +79,15 @@ public class IsoChecker {
     // Namely, that exists such permutation p, that for each i, group g1[i] is isomorphic to g2[p[i]].
     public static boolean areListsIsomorhic(List<FinGroup> groups1, List<FinGroup> groups2) {
         int n = groups1.size();
-        if(n != groups2.size()) return false;
+        if (n != groups2.size()) return false;
 
         boolean used[] = new boolean[n]; // Indices in g2, to which we already found isomorphic groups.
-        for(int i=0;i<n;i++) {
+        for (int i = 0; i < n; i++) {
             IsoChecker checker = new IsoChecker(groups1.get(i));
             boolean found = false;
-            for(int j=0;j<n;j++) {
-                if(used[j]) continue;
-                if(checker.isIsomorphic(groups2.get(j))) {
+            for (int j = 0; j < n; j++) {
+                if (used[j]) continue;
+                if (checker.isIsomorphic(groups2.get(j))) {
                     found = true;
                     used[j] = true;
                     break;

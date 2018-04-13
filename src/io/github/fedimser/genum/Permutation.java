@@ -41,7 +41,7 @@ public class Permutation {
 
     public void set(int pos, int value) {
         assert(perm[pos]==-1);
-        assert(inv[value]==-1);
+        assert (inv[value] == -1);
         perm[pos] = value;
         inv[value] = pos;
     }

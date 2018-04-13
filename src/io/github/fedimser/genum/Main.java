@@ -13,11 +13,11 @@ public class Main {
 
         FileWriter writer = new FileWriter("groups.txt");
 
-        for(int order=1; order<=9; order++) {
+        for (int order = 1; order <= 9; order++) {
             System.out.println(order);
 
             Date start = new Date();
-            writer.write("All finite groups of order " + String.valueOf(order) + ":\n" );
+            writer.write("All finite groups of order " + String.valueOf(order) + ":\n");
             List<FinGroup> groups = gen.getAllGroups(order);
 
             int count = groups.size();
