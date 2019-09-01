@@ -1,6 +1,7 @@
 package io.github.fedimser.genum;
 
-import javax.swing.plaf.multi.MultiTabbedPaneUI;
+import java.util.Arrays;
+import java.util.List;
 
 public class FinGroup {
     private int order;
@@ -23,8 +24,12 @@ public class FinGroup {
         for (int i = 0; i < order; i++) {
             for (int j = 0; j < order; j++) {
                 g[i][j] = mulTable[i][j];
-                if (g[i][j] < 0 || g[i][j] >= order)
-                    throw new IllegalArgumentException("Bad mult table.");
+                if (g[i][j] < 0) {
+                    throw new IllegalArgumentException("Negative value in mult table");
+                }
+                if (g[i][j] >= order) {
+                    throw new IllegalArgumentException("Bad value in mult table.");
+                }
                 if (g[i][j] == 0) {
                     inv[i] = j;
                     inv[j] = i;
@@ -125,5 +130,13 @@ public class FinGroup {
             }
         }
         return new FinGroup(g);
+    }
+
+    public static FinGroup multiplyGroups(FinGroup... groups) {
+        FinGroup result = groups[0];
+        for (int i = 1; i < groups.length; i++) {
+            result = multiplyGroups(result, groups[i]);
+        }
+        return result;
     }
 }

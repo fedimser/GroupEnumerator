@@ -1,35 +1,36 @@
 package io.github.fedimser.genum;
 
-import java.util.ArrayList;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class GroupGeneratorTest {
 
     private GroupGenerator gen = new GroupGenerator();
 
-    @org.junit.Test
+    @Test
     public void tes_order1() throws Exception {
         List<FinGroup> correct = Collections.singletonList(FinGroupFactory.getCyclicGroup(1));
         assertTrue(IsoChecker.areListsIsomorhic(correct, gen.getAllGroups(1)));
     }
 
-    @org.junit.Test
+    @Test
     public void test_order2() throws Exception {
         List<FinGroup> correct = Collections.singletonList(FinGroupFactory.getCyclicGroup(2));
         assertTrue(IsoChecker.areListsIsomorhic(correct, gen.getAllGroups(2)));
     }
 
-    @org.junit.Test
+    @Test
     public void test_order3() throws Exception {
         List<FinGroup> correct = Collections.singletonList(FinGroupFactory.getCyclicGroup(3));
         assertTrue(IsoChecker.areListsIsomorhic(correct, gen.getAllGroups(3)));
     }
 
-    @org.junit.Test
+    @Test
     public void test_order4_are_Z4_and_Z2xZ2() throws Exception {
         FinGroup z2 = FinGroupFactory.getCyclicGroup(2);
         FinGroup z4 = FinGroupFactory.getCyclicGroup(4);
@@ -37,13 +38,13 @@ public class GroupGeneratorTest {
         assertTrue(IsoChecker.areListsIsomorhic(correct, gen.getAllGroups(4)));
     }
 
-    @org.junit.Test
+    @Test
     public void test_order5() throws Exception {
         List<FinGroup> correct = Collections.singletonList(FinGroupFactory.getCyclicGroup(5));
         assertTrue(IsoChecker.areListsIsomorhic(correct, gen.getAllGroups(5)));
     }
 
-    @org.junit.Test
+    @Test
     public void test_order6_are_Z6_and_S3() throws Exception {
         List<FinGroup> correct = Arrays.asList(
                 FinGroupFactory.getCyclicGroup(6),
@@ -52,13 +53,13 @@ public class GroupGeneratorTest {
         assertTrue(IsoChecker.areListsIsomorhic(correct, gen.getAllGroups(6)));
     }
 
-    @org.junit.Test
+    @Test
     public void test_order7() throws Exception {
         List<FinGroup> correct = Collections.singletonList(FinGroupFactory.getCyclicGroup(7));
         assertTrue(IsoChecker.areListsIsomorhic(correct, gen.getAllGroups(7)));
     }
 
-    @org.junit.Test
+    @Test
     public void test_order8() throws Exception {
         FinGroup z2 = FinGroupFactory.getCyclicGroup(2);
         FinGroup z4 = FinGroupFactory.getCyclicGroup(4);
