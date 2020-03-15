@@ -47,6 +47,7 @@ public class Polynomial {
     }
 
     // TODO: implement more efficient algorithm.
+    /** Creates polynomial of given degree, which is irreducible in F_p. */
     public static Polynomial createIrreducible(long p, int degree) {
         if (degree == 1) {
             return createFromCompactForm(p, p);

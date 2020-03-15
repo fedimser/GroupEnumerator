@@ -11,6 +11,7 @@ import static io.github.fedimser.genum.FinGroup.multiplyGroups;
 import static io.github.fedimser.genum.FinGroupFactory.getCyclicGroup;
 import static io.github.fedimser.genum.IsoChecker.areIsomorhic;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class FiniteFieldTest {
@@ -74,5 +75,11 @@ public class FiniteFieldTest {
     @Test
     public void testElements_F9() {
         assertFieldElements(9, "0", "1", "2", "x", "x+1", "x+2", "2*x", "2*x+1", "2*x+2");
+    }
+
+    @Test
+    public void testElements_F28() {
+        FiniteField field =  create(128);
+        assertEquals(field.getElements().get(67).toString(), "x^6+x+1");
     }
 }
