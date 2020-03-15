@@ -1,6 +1,11 @@
 package io.github.fedimser.finfield;
 
+import com.google.common.collect.ImmutableList;
 import io.github.fedimser.genum.FinGroup;
+
+import java.util.stream.LongStream;
+
+import static com.google.common.collect.ImmutableList.toImmutableList;
 
 public class FiniteField {
 
@@ -13,7 +18,7 @@ public class FiniteField {
     // Such that this field is F_p[x]
     private final Polynomial irreducibleGenerator;
 
-    private Polynomial elements[];
+    private ImmutableList<Polynomial> elements;
     private int[] inverseTable;
     private int[][] additionTable;
     private int[][] multiplicationTable;
@@ -52,7 +57,7 @@ public class FiniteField {
      * Prints characteristic, irreducible polynomial and explicit addition, division and
      * multiplication tables.
      */
-    public String describe() {
+    public String describe(boolean withTables) {
         String fieldName = "F_" + getCardinality();
 
         StringBuilder sb = new StringBuilder();
@@ -64,35 +69,37 @@ public class FiniteField {
                 .append(irreducibleGenerator.toString())
                 .append(").\n");
 
-        sb.append("Addition table for ").append(fieldName).append(":\n");
-        printTable(additionTable, "+", sb);
-        sb.append("\n");
-        sb.append("Multiplication table for ").append(fieldName).append(":\n");
-        printTable(multiplicationTable, "*", sb);
-        sb.append("\n");
-        sb.append("Division table for ").append(fieldName).append(":\n");
-        printTable(divisionTable, "/", sb);
-        sb.append("\n\n");
+        if (withTables) {
+            sb.append("Addition table for ").append(fieldName).append(":\n");
+            printTable(additionTable, "+", sb);
+            sb.append("\n");
+            sb.append("Multiplication table for ").append(fieldName).append(":\n");
+            printTable(multiplicationTable, "*", sb);
+            sb.append("\n");
+            sb.append("Division table for ").append(fieldName).append(":\n");
+            printTable(divisionTable, "/", sb);
+            sb.append("\n\n");
+        }
 
         return sb.toString();
     }
 
     private void prepareTables() {
         int card = (int) getCardinality();
-        elements = new Polynomial[card];
+        elements = LongStream
+                .range(0, card)
+                .mapToObj(i -> Polynomial.createFromCompactForm(i, p))
+                .collect(toImmutableList());
+
         inverseTable = new int[card];
         additionTable = new int[card][card];
         multiplicationTable = new int[card][card];
         divisionTable = new int[card][card];
 
         for (int i = 0; i < card; i++) {
-            elements[i] = Polynomial.createFromCompactForm(i, p);
-        }
-
-        for (int i = 0; i < card; i++) {
-            Polynomial p1 = elements[i];
+            Polynomial p1 = elements.get(i);
             for (int j = 0; j < card; j++) {
-                Polynomial p2 = elements[j];
+                Polynomial p2 = elements.get(j);
                 int sum = (int) Polynomial.add(p1, p2).toCompactForm();
                 int product = (int) Polynomial.residual(Polynomial.multiply(p1, p2),
                         irreducibleGenerator)
@@ -135,7 +142,7 @@ public class FiniteField {
         if (element == -1) {
             return "N/A";
         } else {
-            return elements[(int) element].toString("a");
+            return elements.get((int) element).toString("a");
         }
     }
 
@@ -161,5 +168,66 @@ public class FiniteField {
 
     public FinGroup getMultiplicativeGroup() {
         return multiplicativeGroup;
+    }
+
+    private int elementTimes(int elementIndex, int multiplier) {
+        int ansIndex = 0;
+        int accIndex = elementIndex;
+        while(multiplier !=0) {
+            if (multiplier % 2 == 1) ansIndex = additionTable[ansIndex][accIndex];
+            multiplier /= 2;
+            accIndex = additionTable[accIndex][accIndex];
+        }
+        return ansIndex;
+    }
+
+    private int elementToPower(int elementIndex, int power) {
+        int ansIndex = 1;
+        int accIndex = elementIndex;
+        while(power !=0) {
+            if (power % 2 == 1) ansIndex = multiplicationTable[ansIndex][accIndex];
+            power /= 2;
+            accIndex = multiplicationTable[accIndex][accIndex];
+        }
+        return ansIndex;
+    }
+
+    private int evaluatePolynomial(ImmutableList<Integer> coefs, int xIndex) {
+        int deg = coefs.size() - 1;
+        int ansIndex = 0;
+        for(int i=0; i<=deg;i++) {
+            int elToAdd = elementTimes(elementToPower(xIndex, i), coefs.get(i));
+            ansIndex = additionTable[ansIndex][elToAdd];
+        }
+        return ansIndex;
+    }
+
+    public ImmutableList<Integer> allRootsOfPolynomial(ImmutableList<Integer> coefs) {
+        ImmutableList.Builder<Integer> ans = ImmutableList.builder();
+        int card = (int) getCardinality();
+        for(int i=0;i<card;i++) {
+            if (evaluatePolynomial(coefs, i) == 0) {
+                ans.add(i);
+            }
+        }
+        return ans.build();
+    }
+
+    public void analyzePolynomial(ImmutableList<Integer> coefs) {
+        System.out.println(describe(false));
+        System.out.println("Polynomial is " + Polynomial.polynomialToString(coefs));
+        ImmutableList<Integer> roots = allRootsOfPolynomial(coefs);
+        if (roots.isEmpty()) {
+            System.out.println("No roots.");
+        } else {
+            System.out.println("Found roots: \n");
+            for (int root : roots) {
+                System.out.println(elementToString(root));
+            }
+        }
+    }
+
+    public ImmutableList<Polynomial> getElements() {
+        return elements;
     }
 }

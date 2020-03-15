@@ -1,5 +1,7 @@
 package io.github.fedimser.finfield;
 
+import com.google.common.collect.ImmutableList;
+
 public class Utils {
 
     private Utils() {
@@ -55,5 +57,11 @@ public class Utils {
             if (curX == x) return i;
             if (curX > x) return -1;
         }
+    }
+
+    static ImmutableList<Long> convertListToLong(ImmutableList<Integer> list) {
+        ImmutableList.Builder<Long> ans = ImmutableList.builder();
+        for(int x: list) ans.add((long)x);
+        return ans.build();
     }
 }

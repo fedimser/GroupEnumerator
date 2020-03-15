@@ -1,13 +1,11 @@
 package io.github.fedimser.finfield;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents polynomial over remainders modulo p.
@@ -167,8 +165,9 @@ public class Polynomial {
         return coefs.get(coefs.size() - 1) == 1L;
     }
 
-
-    public String toString(String variableName) {
+    public static String polynomialToString(ImmutableList<Long> coefs, String variableName) {
+        int degree = coefs.size() - 1;
+        assert (degree == 0 || coefs.get(degree) !=0);
         if (degree == 0) {
             return "" + coefs.get(0);
         }
@@ -183,6 +182,14 @@ public class Polynomial {
             }
         }
         return sb.toString();
+    }
+
+    public static String polynomialToString(ImmutableList<Integer> coefs) {
+        return  polynomialToString(Utils.convertListToLong(coefs), "x");
+    }
+
+    public String toString(String variableName) {
+        return polynomialToString(this.coefs, variableName);
     }
 
     @Override

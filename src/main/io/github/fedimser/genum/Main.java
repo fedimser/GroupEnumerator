@@ -28,7 +28,8 @@ public class Main {
             }
 
             Date end = new Date();
-            writer.write("Time elapsed: " + String.valueOf(end.getTime() - start.getTime()) + "ms.\n");
+            writer.write("Time elapsed: " + String.valueOf(end.getTime() - start.getTime()) + "ms" +
+                    ".\n");
             writer.write("------------------------\n\n\n");
         }
 

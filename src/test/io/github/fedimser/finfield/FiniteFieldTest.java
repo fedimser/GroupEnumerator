@@ -1,16 +1,19 @@
 package io.github.fedimser.finfield;
 
+import com.google.common.collect.ImmutableList;
 import io.github.fedimser.genum.FinGroup;
 import org.junit.Test;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static io.github.fedimser.finfield.FiniteField.canCreate;
 import static io.github.fedimser.finfield.FiniteField.create;
 import static io.github.fedimser.genum.FinGroup.multiplyGroups;
 import static io.github.fedimser.genum.FinGroupFactory.getCyclicGroup;
 import static io.github.fedimser.genum.IsoChecker.areIsomorhic;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class FinGroupTest {
+public class FiniteFieldTest {
     private static final FinGroup C2 = getCyclicGroup(2);
     private static final FinGroup C3 = getCyclicGroup(3);
     private static final FinGroup C5 = getCyclicGroup(5);
@@ -33,9 +36,43 @@ public class FinGroupTest {
 
     @Test
     public void testMultiplicativeGroups() {
-        for(int i=1;i<200;i++) {
-            if(!canCreate(i)) continue;
-            assertTrue(areIsomorhic(create(i).getMultiplicativeGroup(), getCyclicGroup(i-1)));
+        for (int i = 1; i < 200; i++) {
+            if (!canCreate(i)) continue;
+            assertTrue(areIsomorhic(create(i).getMultiplicativeGroup(), getCyclicGroup(i - 1)));
         }
+    }
+
+    private void assertFieldElements(int cardinality, String... expectedElements) {
+        ImmutableList<String> actualElements = create(cardinality)
+                .getElements()
+                .stream()
+                .map(Polynomial::toString)
+                .collect(toImmutableList());
+        assertEquals(ImmutableList.copyOf(expectedElements), actualElements);
+    }
+
+    @Test
+    public void testElements_F2() {
+        assertFieldElements(2, "0", "1");
+    }
+
+    @Test
+    public void testElements_F3() {
+        assertFieldElements(3, "0", "1", "2");
+    }
+
+    @Test
+    public void testElements_F4() {
+        assertFieldElements(4, "0", "1", "x", "x+1");
+    }
+
+    @Test
+    public void testElements_F8() {
+        assertFieldElements(8, "0", "1", "x", "x+1", "x^2", "x^2+1", "x^2+x", "x^2+x+1");
+    }
+
+    @Test
+    public void testElements_F9() {
+        assertFieldElements(9, "0", "1", "2", "x", "x+1", "x+2", "2*x", "2*x+1", "2*x+2");
     }
 }

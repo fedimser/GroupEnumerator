@@ -1,8 +1,5 @@
 package io.github.fedimser.genum;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class FinGroup {
     private int order;
     private int g[][];  // Multiplication table.
